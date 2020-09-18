@@ -1,0 +1,68 @@
+
+<script>
+\$put("queuenumber", new function(){ 
+
+	this.seriesno = null; 
+	this.serverDate = null;
+
+	this.doOk = function() {
+		return '_close'; 
+	}
+	this.print = function(){
+		window.print();
+		return "_close"
+	}
+}); 
+</script>
+
+<style>
+input.queue-number-button { font-size:14pt; padding:5px; width:100px; }
+.queue-header { width:100%; text-align:center; font-size:12pt; font-family:Tahoma; }
+.queue-number-title {	font-size:12pt;font-weight:bold;color:#505050;padding-left:5px;margin:5px;text-align: center;}
+.queue-number-series { text-align:center; padding:10px; }
+.queue-number-series > label { font-size:2.0em; }
+.queue-info { width:100%; text-align:center; font-size:14px; padding-bottom:10px; } 
+
+.barcode {
+    font-size: 30px;
+    padding: 0em 0em 1em;
+    display: inline-block;
+}
+input.btn {
+	width: 100%;
+}
+input.btn-ok {
+	margin-top:5px;
+}
+
+@media print {
+	.ui-dialog {
+		left: 0px !important;
+		top: 0px !important;
+	}
+}
+</style>
+
+${_style_custom}
+
+<div class="printable">
+	<p class="queue-number-title">Queue Ticket Number</p>
+	<div class="queue-header">${PROJECT['lgu.name']}</div>   
+	<h1 class="queue-number-series">
+		<label r:context="queuenumber">#{seriesno}</label>
+
+		<p align="center" style="margin:0px 0px 10px 0px;font-size:0.5em; font-weight:normal;">
+			This number is valid only on <br/> 
+			<label r:context="queuenumber">#{serverDate}</label> 
+		</p>
+	</h1> 
+	<br/>
+	<br/>
+	<br/>
+</div>
+<div align="center"> 
+     <input type="button" r:context="queuenumber" value="Print" class="queue-number-button btn" r:name="print">
+     <input type="button" r:context="queuenumber" value="Close" class="queue-number-button btn btn-ok" r:name="doOk">
+</div> 
+
+       

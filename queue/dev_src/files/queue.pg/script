@@ -1,0 +1,201 @@
+<script> 
+/*
+   Script to the Notification 
+ */
+var qsock = Socket.create('queue_poll'); 
+qsock.handlers.h = function( o ) { 
+	
+	var srcgroupid = '${PARAMS.group}'.toLowerCase();
+	if ( o == null || o.groupid == null ) return; 
+	if ( srcgroupid != o.groupid.toLowerCase() ) return; 
+
+	if ( o.type == 'RELOAD_MONITOR' ) { 
+		window.location.reload( true ); 
+
+	} else if ( o.type=='TAKE_NUMBER' || o.type=='BUZZ_NUMBER' ) { 
+		var elemid = '#'+ o.uuid; 
+		var elemobj = \$( elemid ); 
+		elemobj.removeClass('number-consumed'); 
+		
+		var ticketno = o.ticketno; 
+		if ( ticketno == null ) ticketno = o.formattedseriesno; 
+		if ( ticketno ) { 
+			elemobj.html( ticketno ); 
+			new Blinker( elemid ).start();  
+		} else {
+			elemobj.html('---');
+		}
+
+	} else if ( o.type=='CONSUME_NUMBER' ) {
+		var elemid = '#'+ o.uuid; 
+		new Blinker( elemid ).stop();
+
+		var elemobj = \$( elemid ); 
+		var ticketno = o.ticketno; 
+		if ( ticketno == null ) ticketno = o.formattedseriesno; 
+		if ( ticketno ) { 
+			elemobj.addClass('number-consumed'); 
+			elemobj.html( ticketno ); 
+		} else { 
+			elemobj.removeClass('number-consumed'); 
+			elemobj.html( '---' ); 
+		} 
+
+	} else if ( o.type=='REMOVE_COUNTER_SECTION' ) { 
+		var elemid = '#'+ o.uuid +'-counter-panel'; 
+		\$( elemid ).remove(); 
+
+	} else if ( o.type=='ADD_COUNTER_SECTION' ) { 
+		var htmlstr = '' +  
+			'<div class="counter-container" id="'+ o.uuid +'-counter-panel">' + 
+			'   <h2>'+ o.countercode +' - <span id="'+ o.uuid +'">---</span></h2>' + 
+			'</div>'; 
+
+		var elemid = '#'+ o.sectionid +'-section-panel'; 
+		var secpanel = \$( elemid ); 
+		var innerdiv = \$( htmlstr ); 
+		innerdiv.appendTo( secpanel );
+	} 
+} 
+qsock.start(); 
+
+
+/*
+   Script for Video Playlist 
+ */
+var videos = \$('div.video-panel > video');
+videos.css( 'display', 'none' ); 
+setTimeout(function(){ 
+	videos.each(function(){
+		var vd = \$(this); 
+		vd[0].addEventListener('ended', function() {
+			var e = \$(this); 
+			var c = e.find('source:first'); 
+			c.remove(); 
+			c.appendTo( e ); 
+			e[0].load();
+			e[0].play();
+		});
+		vd.fadeIn( 500, function(){
+			this.play(); 
+		});		
+	});
+}, 1000); 
+
+/*
+   Script to fetch the Waiting List Data  
+ */
+function WaitListFetcher() {
+	var _queueSvc = Service.lookup('QueueService', 'main'); 
+
+	function fetchList() {
+		var sections = []; 
+		var success = false; 
+		var params = { groupid: '${PARAMS.group}' } 
+		var panels = \$('div.waitlist-panel'); 
+		if ( panels.length > 0 ) { 
+			var wli = \$('#waitlist_item:first'); 
+			if ( wli.length == 0 ) success = true; 
+
+			if ( success ) { 
+				success = false; 
+				sections = _queueSvc.getPendingSections( params ); 
+				if ( sections.length > 0 ) success = true;  
+			} 
+
+			if ( success ) {
+				for ( var i=0; i<sections.length; i++) { 
+					params.sectionid = sections[i].objid; 
+					var wlist = _queueSvc.getWaitingList( params ); 
+					for ( var ii=0; ii<wlist.length; ii++ ) { 
+						addItem( wlist[ii], panels ); 
+					} 
+				} 
+			} 
+		} 
+		setTimeout( fetchList, 2000); 
+	} 
+
+	function addItem( oitem, panels ) {
+		var htmlstr = '<div id="waitlist_item" class="waitlist_item_hidden '+ oitem.ticketno +'"> '+ oitem.sectiontitle +' - '+ oitem.ticketno +'</div>';
+		panels.each(function(){
+			var panel = \$(this); 
+			\$( htmlstr ).appendTo( panel ); 
+		}); 
+	} 
+
+	this.run = function() {
+		setTimeout( fetchList, 1000); 
+	}
+}
+//new WaitListFetcher().run(); 
+
+
+/*
+   Script to Animate the Waiting List 
+ */
+function WaitListProc( panel ) {
+	var _self = this; 
+
+	this.panel = panel; 
+
+	function showNextItem() { 
+		var child = panel.find('.waitlist_item_hidden:first');
+		if ( child.length > 0 ) {
+			child.fadeIn( 800, function(){
+				var ee = \$(this);
+				ee.removeClass('waitlist_item_hidden'); 
+				ee.addClass('waitlist_item_showed'); 
+				setTimeout( removeShowedItem, 3000); 
+			});
+		} else {
+			setTimeout( showNextItem, 2000 ); 	
+		} 
+	}
+
+	function removeShowedItem() { 
+		var child = panel.find('.waitlist_item_showed:first');
+		if ( child.length > 0) { 
+			child.fadeOut( 200, function(){
+				\$(this).remove(); 
+			});
+		} 
+		setTimeout( showNextItem, 10 ); 
+	} 
+
+	this.run = function() {
+		setTimeout( showNextItem, 2000 ); 
+	}
+}
+\$('div.waitlist-panel').each(function(){ 
+	//new WaitListProc( \$(this)).run();  
+}); 
+
+
+/*
+   Script to fetch the Announcement
+ */
+async function fetchQueueAnnouncement() {
+	var _persistSvc = Service.lookup('PersistenceService', 'main'); 
+
+	function fetchData() {
+		var elem = \$('.announcement'); 
+		if ( elem.length > 0 ) { 
+			try { 
+				fetchDataImpl( elem ); 
+				setTimeout(fetchData, 60000);
+			} 
+			catch(e) {
+				setTimeout(fetchData, 2000);
+			}
+		} 
+	} 
+	function fetchDataImpl( elem ) {
+		var data = _persistSvc.read({_schemaname:'queue_announcement', objid:'announcement'}); 
+		elem.html( data.content );  
+	} 
+
+	fetchData();
+} 
+fetchQueueAnnouncement(); 
+</script> 

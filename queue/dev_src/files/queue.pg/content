@@ -1,0 +1,118 @@
+<%
+def UUID = new java.rmi.server.UID().toString();
+def dateSvc = SERVICE.lookup('DateService', 'main');
+def serverDate = dateSvc.format('MMMMM dd, yyyy', dateSvc.getServerDate());
+
+def gSvc = SERVICE.lookup('QueueGroupService', 'main'); 
+def groupinfo = gSvc.open( PARAMS.group );  
+def sections = gSvc.getSections( PARAMS.group ); 
+if ( PARAMS.section ) {
+	def o = sections.find{ it.objid.toString().equalsIgnoreCase( PARAMS.section ) } 
+	if ( o ) {
+		sections.clear(); 
+		sections << o; 
+	}
+}
+
+sections.sort{ it.sortorder }
+sections.each{ o-> 
+	def prefix = (o.prefix? o.prefix : ''); 
+	o.counters = gSvc.getSectionCounters( o.objid ); 
+	o.countersize = o.counters.size();
+	o.counters.each{ b-> 
+		b.uuid = ''+ o.objid +'_'+ b.objid; 
+		b.formattedseriesno = '---'; 
+		if ( b.ticketno ) {
+			b.formattedseriesno = b.ticketno; 
+			
+		} else if ( b.seriesno ) {
+			def snum = b.seriesno.toString();
+			if ( snum.length() < 4 ) { 
+				snum = snum.padLeft(4,'0'); 
+			} 
+			b.formattedseriesno = ''+prefix+snum; 		
+		} 
+	} 
+}
+
+def videos = [];
+PROJECT.each{ k,v-> 
+	if ( k.toString().startsWith('video_source_')) videos << v; 
+}
+System.getProperties().each{ k,v-> 
+	if ( k.toString().startsWith('video_source_')) videos << v; 
+}
+System.getenv().each{ k,v-> 
+	if ( k.toString().startsWith('video_source_')) videos << v; 
+}
+%>
+<div class="wrapper"> <!-- open wrapper -->	
+	<div class="header">	
+		<div class="container-fluid">
+			<div class="row">	 
+				<ul class="headertv">
+				    <li><img src="/res/images/lgu-logo.png" alt="lgu logo" class='lgu-logo' style="width:80px;"></li>
+				    <li><img src="/res/images/etracs.png" alt="etracs logo" class='queue-logo'></li>
+				    <li class="lead header-title"> 
+				    	${groupinfo?.title} 
+				    	<p class="header-subtitle"> ${PROJECT['lgu.name'].toString().toUpperCase()} </p>
+				    </li>
+				    <li class="date">
+				      <img src="/res/images/rameses.png" alt="rameses logo" class='rameses-logo'>
+				      <p id="clockbox" class="deskclock"></p>
+				      <p class="resdate">Today is ${serverDate}</p>
+				    </li>
+				 </ul>
+			 </div>
+		</div>
+	</div>
+	<div class="content"> <!-- open content -->	
+		<div class="wrap"> <!-- open wrap --> 
+		  	<div class="video-panel video" style="width:40vw;">
+				<video id="video" muted style="width:40vw;">
+					<% videos.each{ %>
+			  		<source src="${it}" type="video/mp4">
+			  		<% } %>
+				</video>
+			</div> 
+			<div class="servedQueue" style="margin-left:15px;"> <!-- open servedQueue -->
+			<% sections.each{ a-> %> 
+				<div class="serving" id="${a.objid.toLowerCase()}-section-panel"> <!-- open serving-->
+				<h1 class="dep-name">${a.title}</h1> 
+				<% 
+					for (int i=0; i<a.countersize; i++){ 
+						def sc_uuid = '';
+						def sc_code = '&nbsp;';
+						def sc_seriesno = '&nbsp;';
+						try { 
+							def c = a.counters[i]; 
+							sc_code = c.code; 
+							sc_uuid = c.uuid.toLowerCase(); 
+							sc_seriesno = c.formattedseriesno; 
+						} catch( Throwable t ) {;} 
+						%>
+						<div class="counter-container" id="${sc_uuid}-counter-panel">
+				            <h2>${sc_code} - <span id="${sc_uuid}">${sc_seriesno}</span></h2>
+				       	</div>
+				<%}%> 
+				</div> <!-- close serving -->
+			<%}%>
+			</div> <!-- close servedQueue -->
+		</div> <!-- close wrap -->	
+
+	</div><!-- close content -->	
+
+
+	<div id="footer">
+		<div id="footer-body">
+			<marquee direction="scroll"> 
+				<h3 class="announcement"> </h3> 
+			</marquee>
+		</div>
+	</div>
+
+</div> <!-- close wrapper -->
+
+${_script}
+${_style}
+${_style_custom}

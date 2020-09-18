@@ -1,0 +1,82 @@
+<%
+def dateSvc = SERVICE.lookup('DateService', 'main');
+def serverDate = dateSvc.format('MMMMM dd, yyyy', dateSvc.getServerDate());
+
+def gSvc = SERVICE.lookup('QueueGroupService', 'main'); 
+def groups = gSvc.getGroupsWithSections(); 
+groups = groups.findAll{( it.sections )} 
+groups.each{
+	it.sections.sort{( it.index ? it.index : 0 )}
+}
+
+if ( PARAMS.group ) {
+	def o = groups.find{ it.objid.toString().equalsIgnoreCase( PARAMS.group ) } 
+	if ( o ) { 
+		groups.clear(); 
+		groups << o; 
+	} 
+} 
+%>
+
+${_style_custom}
+
+<div class="container"><!-- open container -->
+	<div class="container-fluid"> <!-- open container-fluid -->
+		<div class="row"> <!-- open row -->
+			<ul class="header">
+			  <li><img src="/res/images/lgu-logo.png" alt="lgu logo" class="lgu-logo" style="width:80px;"></li>
+			  <li><img src="/res/images/etracs.png" alt="etracs logo" class="queue-logo"></li>
+			  <li></li>
+			  <li class="date">
+			    <img src="/res/images/rameses.png" alt="rameses logo" class="rameses-logo">
+			    <p id="clockbox"></p>
+			  </li>
+			</ul>
+		</div> <!-- close row -->
+	</div><!-- close container-fluid -->
+	<%groups.each { g-> %>		
+		<div class="row">
+	        <h1 class="page-header">${g.title}</h1>
+	    </div>
+		<div class="row"> <!-- open row -->
+			<div class="spliter"> <!-- opens pliter -->
+		<%g.sections.each { s->%>
+		
+			<div class="screen3 resize6"> 			
+				<a class="k-button" r:context="queue" r:name="fetchNextNumber" r:param_sectionid="${s.objid}" /> 
+					<span>	${s.objid.toUpperCase()} - ${s.title}</span>
+				</a>
+			</div> 
+		
+		<%}%>
+			</div> <!-- close spliter -->
+		</div> <!-- close row -->
+	
+	<%}%>
+
+</div><!-- close container -->
+
+
+
+
+<script>
+var qnpage = @register('/queuenumber') 
+
+\$put("queue", new function(){
+
+	var svc = Service.lookup('QueueService', 'main');
+
+	this.sectionid = null; 
+
+	this.fetchNextNumber = function() {
+		if ( !this.sectionid ) {
+			alert('No sectionid specified'); 
+			return; 
+		}
+
+		var seriesno = svc.fetchNextNumber({ sectionid: this.sectionid }); 
+		return new PopupOpener(qnpage.id, { seriesno: seriesno, serverDate: '${serverDate}' }); 
+	}
+}); 
+</script> 
+
