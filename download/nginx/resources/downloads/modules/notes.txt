@@ -1,0 +1,4 @@
+The module folder is relocated under "node" folder 
+which now supports dynamic and separate registration 
+of jar files. LGU's will make use of the _custom folder 
+while the main repo is using the modules from the node.
