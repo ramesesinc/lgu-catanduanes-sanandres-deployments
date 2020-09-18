@@ -1,0 +1,42 @@
+import com.rameses.annotations.*
+import com.rameses.util.KeyGen;
+
+class TerminalAdminService { 
+
+	@DataContext('terminal') 
+	def em;  
+
+	@ProxyMethod 
+	public void generateKeys( param ) {
+		if ( !param.size ) throw new Exception('Please specify size');
+
+		if ( param.size instanceof String ) { 
+			param.size = Integer.parseInt( param.size ); 
+		} 
+
+		def data = [:];
+		for (int i=0; i<param.size; i++) {
+			data.state = 0; 
+			data.terminalid = KeyGen.generateAlphanumKey( null, 10 ); 
+			em.create( data ); 
+			data.clear(); 			
+		} 
+	} 
+
+	@ProxyMethod 
+	public void unassign( param ) {
+		if ( !param?.terminalid ) throw new Exception('Please specify terminalid');
+
+		def findby = [terminalid : param.terminalid]; 
+		def data = em.find( findby ).first(); 
+		if ( !data ) throw new Exception("'"+param.terminalid+"' terminal not found"); 
+
+		def newdata = [:];
+		data.each{k,v-> 
+			newdata[k] = '{NULL}'; 
+		} 
+		newdata.state = 0; 
+		newdata.terminalid = param.terminalid; 
+		em.find( findby ).update( newdata ); 
+	} 		
+}
