@@ -1,0 +1,30 @@
+[Docker App]
+IP  : localhost
+User: lgusanandres
+Pass: p@ssw0rd
+
+
+[Portainer]
+URL  : http://localhost:9000
+User : admin
+Pass : p@ssw0rd
+
+
+[GitHub]
+git clone https://github.com/ramesesinc/lgu-catanduanes-sanandres-deployments.git
+
+[DockerHub]
+docker pull nginx:latest
+docker pull ramesesinc/node-download-server:0.0.2
+docker pull ramesesinc/queue-server:255.02.002
+docker pull ramesesinc/notification-server:1.0
+docker pull ramesesinc/mail-server:latest
+docker pull ramesesinc/gdx-proxy-server:v001
+docker pull ramesesinc/gdx-client:1.01.005
+docker pull ramesesinc/etracs25-server-municipality:255.02.007
+
+
+[DB Access]
+IP   : localhost
+User : root
+Pass : P@ssw0rd#
