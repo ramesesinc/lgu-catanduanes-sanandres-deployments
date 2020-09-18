@@ -1,0 +1,3 @@
+provider=socketio
+host=${socketio_host}
+port=7080
