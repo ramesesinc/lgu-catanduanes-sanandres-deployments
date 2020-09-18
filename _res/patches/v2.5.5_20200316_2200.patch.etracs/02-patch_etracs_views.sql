@@ -1,3 +1,44 @@
+drop table if exists sys_user_role;
+drop table if exists vw_af_control_detail;
+drop table if exists vw_af_inventory_summary;
+drop table if exists vw_afunit;
+drop table if exists vw_cashreceipt_itemaccount;
+drop table if exists vw_cashreceipt_itemaccount_collectiontype;
+drop table if exists vw_cashreceiptpayment_noncash;
+drop table if exists vw_cashreceiptpayment_noncash_liquidated;
+drop table if exists vw_collectiongroup;
+drop table if exists vw_collectiontype;
+drop table if exists vw_collectiontype_account;
+drop table if exists vw_remittance_cashreceipt;
+drop table if exists vw_remittance_cashreceipt_af;
+drop table if exists vw_remittance_cashreceipt_afsummary;
+drop table if exists vw_remittance_cashreceiptitem;
+drop table if exists vw_remittance_cashreceiptpayment_noncash;
+drop table if exists vw_remittance_cashreceiptshare;
+drop table if exists vw_collectionvoucher_cashreceiptitem;
+drop table if exists vw_collectionvoucher_cashreceiptshare;
+drop table if exists vw_deposit_fund_transfer;
+drop table if exists vw_entityindividual;
+drop table if exists vw_entity_relation;
+drop table if exists vw_entityindividual_lookup;
+drop table if exists vw_entityrelation_lookup;
+drop table if exists vw_income_ledger;
+drop table if exists vw_afunit;
+drop table if exists vw_income_ledger;
+drop table if exists vw_account_item_mapping;
+drop table if exists vw_account_income_summary;
+drop table if exists vw_cashbook_cashreceipt;
+drop table if exists vw_cashbook_cashreceipt_share;
+drop table if exists vw_cashbook_cashreceiptvoid;
+drop table if exists vw_cashbook_remittance;
+drop table if exists vw_cashreceipt_itemaccount_collectiongroup;
+drop table if exists vw_account_mapping;
+drop table if exists vw_income_summary;
+drop table if exists sys_user_role;
+drop table if exists vw_account_incometarget;
+drop table if exists vw_business_application_lob_retire;
+drop table if exists vw_entity_mapping;
+drop table if exists vw_fund;
 
 -- 
 -- VIEWS
