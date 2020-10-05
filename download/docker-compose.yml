@@ -26,6 +26,7 @@ services:
       - ../_custom/static_files:/www/static_files
       - ../_custom/module-client:/www/downloads/modules/custom
 
+      - ../ctc/client:/www/downloads/modules/ctc
       - ../entity/client:/www/downloads/modules/entity
 
     command: ["sh", "/_src/scripts/run.sh" ]
@@ -54,4 +55,5 @@ services:
       - ../_custom/env.conf:/apps/server/public/resources/custom.conf
       - ../_custom/module-client:/apps/server/public/resources/downloads/modules/custom
 
+      - ../ctc/client:/apps/server/public/resources/downloads/modules/ctc
       - ../entity/client:/apps/server/public/resources/downloads/modules/entity
