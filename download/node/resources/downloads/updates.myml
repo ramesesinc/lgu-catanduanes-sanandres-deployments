@@ -1,16 +1,17 @@
-app: 
+app:
+
   env:
-    "app.title" : "ETRACS 2.5 build 05 20200918 (Municipality of San Andres)"
-    "app.host" : "${app_server_ip}:8070"
+    "app.title"   : "ETRACS 2.5 build 05 20200918 (Municipality of San Andres)"
+    "app.host"    : "${app_server_ip}:8070"
     "app.cluster" : "osiris3"
     "app.context" : "etracs25"
-    "app.help" : "http://${app_server_ip}:8080/help"
-    "app.loader" : "com.rameses.osiris2.client.OsirisAppLoader"
-    readTimeout : 300000
-    connectionTimeout : 5000
+    "app.help"    : "http://${app_server_ip}:8080/help"
+    "app.loader"  : "com.rameses.osiris2.client.OsirisAppLoader"
+    readTimeout   : 300000
+    connectionTimeout  : 5000
     "filemgmt.enabled" : false
-    "ws.host" : "${app_server_ip}:8060"
-    "#res.host" : "${app_server_ip}"
+    "ws.host"       : "${app_server_ip}:8060"
+    "#res.host"     : "${app_server_ip}"
     "socketio.host" : "${socketio_host}:7080"
 
   modules:
@@ -38,12 +39,12 @@ app:
     - { order: 156, version: 2.51, file: "modules/shared/rameses-enterprise.jar" }
     - { order: 157, version: 2.51, file: "modules/shared/rameses-enterprise-admin.jar" }
     - { order: 160, version: 2.51, file: "modules/shared/rameses-enterprise-financial.jar" }
-    - { order: 161, version: 2.51, file: "modules/shared/rameses-client-notification2.jar" } 
+    - { order: 161, version: 2.51, file: "modules/shared/rameses-client-notification2.jar" }
     # etracs
     - { order: 200, version: 2.51, file: "modules/etracs/rameses-etracs-main.jar" }
     - { order: 202, version: 2.51, file: "modules/etracs/rameses-gov-etracs-ngas-report.jar" }
     - { order: 203, version: 2.51, file: "modules/etracs/rameses-gov-etracs-sre-report.jar" }
-    - { order: 204, version: 2.51, file: "modules/etracs/rameses-gov-etracs-tools.jar" } 
+    - { order: 204, version: 2.51, file: "modules/etracs/rameses-gov-etracs-tools.jar" }
     - { order: 205, version: 2.51, file: "modules/etracs/rameses-gov-etracs-signatory-template.jar" }
     - { order: 206, version: 2.51, file: "modules/etracs/rameses-gov-lgu.jar" }
     - { order: 207, version: 2.51, file: "modules/etracs/rameses-gov-lgu-treasury.jar" }
@@ -64,8 +65,8 @@ app:
     - { order: 243, version: 2.51, file: "modules/rptis/rameses-gov-etracs-rptis-transmittal.jar" }
     - { order: 244, version: 2.51, file: "modules/rptis/rameses-gov-etracs-rptis-municipality.jar" }
     # bpls
-    - { order: 250, version: 2.51, file: "modules/bpls/rameses-gov-etracs-bpls.jar" } 
-    - { order: 251, version: 2.51, file: "modules/bpls/rameses-gov-etracs-bpls-ceo.jar" } 
-    - { order: 252, version: 2.51, file: "modules/bpls/rameses-gov-etracs-bpls-reports.jar" } 
+    - { order: 250, version: 2.51, file: "modules/bpls/rameses-gov-etracs-bpls.jar" }
+    - { order: 251, version: 2.51, file: "modules/bpls/rameses-gov-etracs-bpls-ceo.jar" }
+    - { order: 252, version: 2.51, file: "modules/bpls/rameses-gov-etracs-bpls-reports.jar" }
     # queue
     - { order: 260, version: 2.51, file: "modules/queue/rameses-queueing.jar" }
