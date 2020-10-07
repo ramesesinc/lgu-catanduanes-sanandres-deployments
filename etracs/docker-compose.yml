@@ -26,8 +26,6 @@ services:
 
       - ../_custom/module-server:/apps/etracs25/modules/ext/zzz-lgu-custom-module
 
-      - ../ctc/server:/apps/etracs25/modules/ext/ctc
-
       - ./dev_modules/rameses-enterprise-admin-services.jar:/services/modules/01-rameses-enterprise-admin-services.jar
       - ./dev_modules/rameses-enterprise-financial-services.jar:/services/modules/rameses-enterprise-financial-services.jar
 
